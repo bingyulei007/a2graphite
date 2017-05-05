@@ -141,6 +141,11 @@ func NewReceiver(config interface{}) (*Receiver, error) {
 	return receiver, nil
 }
 
+// GetName implements Receiver's Start method
+func (receiver *Receiver) GetName() string {
+	return "Ceilometer Receiver"
+}
+
 // Start implements Receiver's Start method
 func (receiver *Receiver) Start(emitChan chan *graphite.Metric) {
 	receiver.emitChan = emitChan

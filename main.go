@@ -7,6 +7,9 @@ import (
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -19,17 +22,31 @@ func main() {
 	var receivers []Receiver
 	metrics := make(chan *graphite.Metric, 10000)
 
-	// start graphite client
+	// start graphite client for receiving metrics
 	client, err := graphite.NewTCPClient(
 		config.Graphite.GraphiteHost,
 		config.Graphite.GraphitePort,
 		config.Graphite.Prefix,
-		time.Second*1,
+		config.Graphite.ReconnectDelay,
 	)
 	if err != nil {
 		log.Fatalln("Failed to create graphite client:", err)
 	}
 	go client.SendChan(metrics)
+
+	var statsClient *graphite.Client
+	if config.Stats.Enabled {
+		// start graphite client for stats
+		statsClient, err = graphite.NewTCPClient(
+			config.Stats.GraphiteHost,
+			config.Stats.GraphitePort,
+			config.Stats.Prefix,
+			config.Stats.ReconnectDelay,
+		)
+		if err != nil {
+			log.Fatalln("Failed to create graphite client for stats:", err)
+		}
+	}
 
 	// start receivers
 	if config.Ceilometer.Enabled {
@@ -54,11 +71,34 @@ func main() {
 		}()
 	}
 
-	// TODO pull stats from modules
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 
-	// TODO catch SIGTERM and SIGINT, stop gracefully
+	var statsTicker <-chan time.Time
+	if config.Stats.Enabled {
+		statsTicker = time.Tick(config.Stats.Interval)
+	} else {
+		statsTicker = make(chan time.Time)
+	}
 
 	for {
-		time.Sleep(1)
+		select {
+		case <-c:
+			log.Println("Got stop signal, stopping...")
+			for _, receiver := range receivers {
+				log.Println("Stopping", receiver.GetName())
+				receiver.Stop()
+			}
+			log.Println("Shuting down graphite client ...")
+			client.Shutdown(1 * time.Second)
+			log.Println("Shuting down graphite client for stats ...")
+			statsClient.Shutdown(1 * time.Second)
+			log.Println("Quit.")
+			return
+		case <-statsTicker:
+			for _, receiver := range receivers {
+				statsClient.SendMetrics(receiver.Stats())
+			}
+		}
 	}
 }

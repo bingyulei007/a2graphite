@@ -6,6 +6,9 @@ import (
 
 // Receiver is interface for all kind of receivers
 type Receiver interface {
+	// GetName should return name of the receiver
+	GetName() string
+
 	// Start the receiver, the receiver should starting listening and receiving metrics,
 	// converted graphite metric should be sent back using the provided chan.
 	// Start() should not block the caller.

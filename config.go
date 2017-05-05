@@ -17,6 +17,8 @@ type graphiteConfig struct {
 }
 
 type statsConfig struct {
+	Enabled        bool          `yaml:"enabled"`
+	Interval       time.Duration `yaml:"interval"`
 	GraphiteHost   string        `yaml:"graphite_host"`
 	GraphitePort   int           `yaml:"graphite_port"`
 	ReconnectDelay time.Duration `yaml:"reconnect_delay"`
@@ -47,6 +49,8 @@ func NewConfig() *Config {
 			BufferSize:     100,
 		},
 		Stats: &statsConfig{
+			Enabled:        true,
+			Interval:       60 * time.Second,
 			ReconnectDelay: 100 * time.Microsecond,
 			BufferSize:     100,
 		},
