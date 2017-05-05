@@ -4,6 +4,7 @@ import (
 	"github.com/openmetric/a2graphite/ceilometer"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"log"
 	"time"
 )
 

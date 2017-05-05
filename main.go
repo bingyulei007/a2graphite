@@ -5,6 +5,8 @@ import (
 	"github.com/openmetric/a2graphite/ceilometer"
 	"github.com/openmetric/graphite-client"
 	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"time"
 )
 
@@ -44,7 +46,13 @@ func main() {
 		log.Fatalln("You must enable at least one receiver.")
 	}
 
-	// TODO enable profiler according to config
+	// enable profiler if configured
+	if config.Profiler.Enabled {
+		go func() {
+			log.Println("Profiled enabled, on:", config.Profiler.ListenAddr)
+			log.Println(http.ListenAndServe(config.Profiler.ListenAddr, nil))
+		}()
+	}
 
 	// TODO pull stats from modules
 

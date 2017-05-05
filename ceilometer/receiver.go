@@ -205,7 +205,7 @@ func (receiver *Receiver) listener(listenAddr string) {
 }
 
 func (receiver *Receiver) worker() {
-	// NOTE Can `msgpackHandle` be reused safely? This is undocumented.
+	// NOTE Can `msgpackHandle` be reused safely? Documentation not found.
 	msgpackHandle := new(codec.MsgpackHandle)
 	for {
 		raw := <-receiver.udpMsgBuffer
