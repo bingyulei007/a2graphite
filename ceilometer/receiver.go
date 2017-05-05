@@ -49,7 +49,11 @@ type rule struct {
 }
 
 // newRule creates a rule object
-func newRule(counterName string, targetName string) *rule {
+func newRule(counterName string, targetName string, autoPrepandInstanceID bool) *rule {
+	if autoPrepandInstanceID {
+		targetName = "{InstanceID}." + targetName
+	}
+
 	r := &rule{
 		TargetName: targetName,
 
@@ -79,16 +83,16 @@ func cleanMountPoint(mountPoint string) string {
 func (r *rule) convert(resource *ceilometerResource) (*graphite.Metric, error) {
 	metricName := r.TargetName
 	if r.subInstanceID {
-		strings.Replace(metricName, "{InstanceID}", resource.ResourceMetadata.InstanceID, -1)
+		metricName = strings.Replace(metricName, "{InstanceID}", resource.ResourceMetadata.InstanceID, -1)
 	}
 	if r.subDiskName {
-		strings.Replace(metricName, "{DiskName}", resource.ResourceMetadata.DiskName, -1)
+		metricName = strings.Replace(metricName, "{DiskName}", resource.ResourceMetadata.DiskName, -1)
 	}
 	if r.subMountPoint {
-		strings.Replace(metricName, "{MountPoint}", resource.ResourceMetadata.MountPoint, -1)
+		metricName = strings.Replace(metricName, "{MountPoint}", cleanMountPoint(resource.ResourceMetadata.MountPoint), -1)
 	}
 	if r.subVnicName {
-		strings.Replace(metricName, "{MountPoint}", cleanMountPoint(resource.ResourceMetadata.VnicName), -1)
+		metricName = strings.Replace(metricName, "{VnicName}", resource.ResourceMetadata.VnicName, -1)
 	}
 
 	metric := &graphite.Metric{
@@ -130,7 +134,7 @@ func NewReceiver(config interface{}) (*Receiver, error) {
 	}
 
 	for counterName, targetName := range conf.Rules {
-		receiver.rules[counterName] = newRule(counterName, targetName)
+		receiver.rules[counterName] = newRule(counterName, targetName, conf.AutoPrepandInstanceID)
 		log.Printf("Registered convention rule: %s -> %s\n", counterName, targetName)
 	}
 
@@ -138,9 +142,12 @@ func NewReceiver(config interface{}) (*Receiver, error) {
 }
 
 // Start implements Receiver's Start method
-func (receiver *Receiver) Start(chan *graphite.Metric) {
+func (receiver *Receiver) Start(emitChan chan *graphite.Metric) {
+	receiver.emitChan = emitChan
+
 	// NOTE start worker before listener, to prevent buffer pool filled up before workers started
 	for i := 0; i < receiver.config.Workers; i++ {
+		log.Println("Start Ceilometer Worker:", i)
 		go receiver.worker()
 	}
 
@@ -151,15 +158,18 @@ func (receiver *Receiver) Start(chan *graphite.Metric) {
 
 // Stop implements Receiver's Stop method
 func (receiver *Receiver) Stop() {
+	// TODO
 }
 
 // Healthy implements Receiver's Healthy method
 func (receiver *Receiver) Healthy() bool {
+	// TODO
 	return false
 }
 
 // Stats implements Receiver's Stats method
 func (receiver *Receiver) Stats() []*graphite.Metric {
+	// TODO
 	var stats []*graphite.Metric
 	return stats
 }
@@ -220,7 +230,8 @@ func (receiver *Receiver) convert(resource *ceilometerResource) *graphite.Metric
 			return nil
 		}
 
-		if metric, err := r.convert(resource); err == nil {
+		metric, err := r.convert(resource)
+		if err == nil {
 			return metric
 		}
 

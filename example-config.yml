@@ -1,0 +1,79 @@
+graphite:
+  graphite_host: 127.0.0.1
+  graphite_port: 2003
+  reconnect_delay: 1s
+  prefix: a2graphite
+  buffer_size: 1000
+
+stats:
+  graphite_host: 127.0.0.1
+  graphite_port: 2003
+  reconnect_delay: 1s
+  prefix: a2graphite.stats
+
+profiler:
+  enabled: false
+  listen_addr: :6060
+
+ceilometer:
+  enabled: true
+  workers: 4
+  listen_addrs:
+    - ":4952"
+  auto_prepand_instance_id: true
+  rules:
+    "cpu_util": "cpu.cpu.percent.util"
+
+    "memory.usage": "memory.memory.size.usage"
+    "memory.total": "memory.memory.size.total"
+    "memory.buffer": "memory.memory.size.buffer"
+    "memory.unused": "memory.memory.size.unused"
+    "memory.cached": "memory.memory.size.cached"
+    "memory.resident": "memory.memory.size.resident"
+    "memory.swap.free": "memory.swap.size.free"
+    "memory.swap.total": "memory.swap.size.total"
+
+    "disk.allocation": "disk.overall.size.allocation"
+    "disk.capacity": "disk.overall.size.capacity"
+    "disk.usage": "disk.overall.size.usage"
+    "disk.read.bytes.rate": "disk.overall.bytes.read"
+    "disk.write.bytes.rate": "disk.overall.bytes.write"
+    "disk.read.requests.rate": "disk.overall.requests.read"
+    "disk.write.requests.rate": "disk.overall.requests.write"
+
+    "disk.free": "disk.mount-{MountPoint}.size.free"
+    "disk.total": "disk.mount-{MountPoint}.size.total"
+    "disk.percent": "disk.mount-{MountPoint}.size.percent"
+
+    "disk.device.allocation": "disk.device-{DiskName}.size.allocation"
+    "disk.device.capacity": "disk.device-{DiskName}.size.capacity"
+    "disk.device.usage": "disk.device-{DiskName}.size.usage"
+    "disk.device.read.bytes.rate": "disk.device-{DiskName}.bytes.read"
+    "disk.device.write.bytes.rate": "disk.device-{DiskName}.bytes.write"
+    "disk.device.read.requests.rate": "disk.device-{DiskName}.requests.read"
+    "disk.device.write.requests.rate": "disk.device-{DiskName}.requests.write"
+
+    "network.incoming.bytes.rate": "network.{VnicName}.bytes.incoming"
+    "network.outgoing.bytes.rate": "network.{VnicName}.bytes.outgoing"
+    "network.incoming.packets.rate": "network.{VnicName}.packets.incoming"
+    "network.outgoing.packets.rate": "network.{VnicName}.packets.outgoing"
+
+    "vcpus": null
+    "memory": null
+    "instance": null
+
+    "image": null
+    "image.size": null
+
+    "volume": null
+    "volume.size": null
+    "volume.create.end": null
+    "volume.delete.end": null
+
+    "disk.root.size": null
+    "disk.ephemeral.size": null
+
+    "network.services.vpn": null
+    "network.services.vpn.connections": null
+    "network.services.firewall": null
+    "network.services.firewall.policy": null
