@@ -5,6 +5,7 @@ package ceilometer
 
 import (
 	"errors"
+	"github.com/openmetric/a2graphite/stats"
 	"github.com/openmetric/graphite-client"
 	"github.com/ugorji/go/codec"
 	"log"
@@ -104,12 +105,27 @@ func (r *rule) convert(resource *ceilometerResource) (*graphite.Metric, error) {
 	return metric, nil
 }
 
+type ceiloStats struct {
+	UDPReceived            stats.Counter `stats:"celiometer.udp.Received"`
+	UDPReceiveError        stats.Counter `stats:"ceilometer.udp.ReceiveError"`
+	UDPBufferSize          stats.Gauge   `stats:"ceilometer.udp.BufferSize"`
+	UDPDropped             stats.Counter `stats:"ceilometer.udp.dropped"`
+	MsgpackReceived        stats.Counter `stats:"ceilometer.msgpack.Received"`
+	MsgpackDecodeOK        stats.Counter `stats:"ceilometer.msgpack.DecodeOK"`
+	MsgpackDecodeError     stats.Counter `stats:"ceilometer.msgpack.DecodeError"`
+	MetricConvertNoRule    stats.Counter `stats:"ceilometer.convert.NoRule"`
+	MetricConvertOK        stats.Counter `stats:"ceilometer.convert.OK"`
+	MetricConvertError     stats.Counter `stats:"ceilometer.convert.Error"`
+	MetricConvertDiscarded stats.Counter `stats:"ceilometer.convert.Discarded"`
+}
+
 // Receiver struct
 type Receiver struct {
 	config       *Config
 	udpMsgBuffer chan []byte
 	emitChan     chan *graphite.Metric
 	rules        map[string]*rule
+	stats        ceiloStats
 }
 
 // NewReceiver implements the required NewReceiver() method
@@ -174,9 +190,8 @@ func (receiver *Receiver) Healthy() bool {
 
 // Stats implements Receiver's Stats method
 func (receiver *Receiver) Stats() []*graphite.Metric {
-	// TODO
-	var stats []*graphite.Metric
-	return stats
+	receiver.stats.UDPBufferSize.Set(int64(len(receiver.udpMsgBuffer)))
+	return stats.ToGraphiteMetrics(receiver.stats)
 }
 
 func (receiver *Receiver) listener(listenAddr string) {
@@ -198,12 +213,14 @@ func (receiver *Receiver) listener(listenAddr string) {
 		// TODO use object pool to improve performance
 		raw := make([]byte, 1500)
 		if _, _, err := conn.ReadFromUDP(raw); err == nil {
+			receiver.stats.UDPReceived.Inc()
 			select {
 			case receiver.udpMsgBuffer <- raw:
 			default:
-				log.Println("msg buffer full, received msg dropped")
+				receiver.stats.UDPDropped.Inc()
 			}
 		} else {
+			receiver.stats.UDPReceiveError.Inc()
 			log.Println("error read from udp", err)
 		}
 	}
@@ -214,13 +231,16 @@ func (receiver *Receiver) worker() {
 	msgpackHandle := new(codec.MsgpackHandle)
 	for {
 		raw := <-receiver.udpMsgBuffer
+		receiver.stats.MsgpackReceived.Inc()
 
 		// TODO use object pool to improve performance
 		resource := &ceilometerResource{}
 
 		if err := codec.NewDecoderBytes(raw, msgpackHandle).Decode(resource); err != nil {
+			receiver.stats.MsgpackDecodeError.Inc()
 			log.Println("error unmarshalling msgpack", err)
 		} else {
+			receiver.stats.MsgpackDecodeOK.Inc()
 			metric := receiver.convert(resource)
 			if metric != nil {
 				receiver.emitChan <- metric
@@ -232,18 +252,22 @@ func (receiver *Receiver) worker() {
 func (receiver *Receiver) convert(resource *ceilometerResource) *graphite.Metric {
 	if r, ok := receiver.rules[resource.CounterName]; ok {
 		if r.TargetName == "" {
+			receiver.stats.MetricConvertDiscarded.Inc()
 			return nil
 		}
 
 		metric, err := r.convert(resource)
 		if err == nil {
+			receiver.stats.MetricConvertOK.Inc()
 			return metric
 		}
 
+		receiver.stats.MetricConvertError.Inc()
 		log.Println("convert error:", err)
 		return nil
 	}
 
+	receiver.stats.MetricConvertNoRule.Inc()
 	log.Println("no convert rule found for:", resource.CounterName)
 	return nil
 }
