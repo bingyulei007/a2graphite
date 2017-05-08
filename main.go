@@ -9,6 +9,7 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"syscall"
 	"time"
 )
@@ -86,6 +87,7 @@ func main() {
 		statsTicker = make(chan time.Time)
 	}
 
+	var gcstats debug.GCStats
 	for {
 		select {
 		case <-c:
@@ -103,6 +105,13 @@ func main() {
 		case <-statsTicker:
 			for _, receiver := range receivers {
 				statsClient.SendMetrics(receiver.Stats())
+			}
+
+			debug.ReadGCStats(&gcstats)
+			statsClient.SendSimple("gc.NumGC", gcstats.NumGC, 0)
+			statsClient.SendSimple("gc.TotalPause", gcstats.PauseTotal, 0)
+			if gcstats.NumGC > 0 {
+				statsClient.SendSimple("gc.LastPause", gcstats.Pause[0], 0)
 			}
 		}
 	}
