@@ -128,6 +128,9 @@ type Receiver struct {
 	emitChan     chan *graphite.Metric
 	rules        map[string]*rule
 	stats        ceiloStats
+
+	resourceObjectPool *simpleFixSizedObjectPool
+	udpMsgPool         *simpleFixSizedObjectPool
 }
 
 // NewReceiver implements the required NewReceiver() method
@@ -149,6 +152,23 @@ func NewReceiver(config interface{}) (*Receiver, error) {
 		config:       conf,
 		udpMsgBuffer: make(chan []byte, conf.BufferSize),
 		rules:        make(map[string]*rule),
+
+		resourceObjectPool: newSimpleFixSizedObjectPool(
+			conf.Workers,
+			func() interface{} { return new(ceilometerResource) },
+			func(obj interface{}) {
+				// NOTE If CounterVolume already has a value, Decode() would try to decode into this type,
+				// and fail if type not match. Set CounterVolume to nil solves this.
+				obj.(*ceilometerResource).CounterVolume = nil
+			},
+		),
+		udpMsgPool: newSimpleFixSizedObjectPool(
+			conf.BufferSize,
+			// NOTE most network interfaces' MTU is less equal to 1500,
+			// however it's still possible to receiver big packets.
+			func() interface{} { return make([]byte, 1500) },
+			nil,
+		),
 	}
 
 	for counterName, targetName := range conf.Rules {
@@ -210,10 +230,7 @@ func (receiver *Receiver) listener(listenAddr string) {
 	defer conn.Close()
 
 	for {
-		// TODO most network interfaces' MTU is less equal to 1500,
-		// however it's still possible to receiver big packets.
-		// TODO use object pool to improve performance
-		raw := make([]byte, 1500)
+		raw := receiver.udpMsgPool.BorrowObject().([]byte)
 		if _, _, err := conn.ReadFromUDP(raw); err == nil {
 			receiver.stats.UDPReceived.Inc()
 			select {
@@ -235,9 +252,7 @@ func (receiver *Receiver) worker() {
 		raw := <-receiver.udpMsgBuffer
 		receiver.stats.MsgpackReceived.Inc()
 
-		// TODO use object pool to improve performance
-		resource := &ceilometerResource{}
-
+		resource := receiver.resourceObjectPool.BorrowObject().(*ceilometerResource)
 		if err := codec.NewDecoderBytes(raw, msgpackHandle).Decode(resource); err != nil {
 			receiver.stats.MsgpackDecodeError.Inc()
 			log.Error("error unmarshalling msgpack", err)
@@ -248,6 +263,8 @@ func (receiver *Receiver) worker() {
 				receiver.emitChan <- metric
 			}
 		}
+		receiver.resourceObjectPool.ReturnObject(resource)
+		receiver.udpMsgPool.ReturnObject(raw)
 	}
 }
 
@@ -272,4 +289,40 @@ func (receiver *Receiver) convert(resource *ceilometerResource) *graphite.Metric
 	receiver.stats.MetricConvertNoRule.Inc()
 	log.Debug("no convert rule found for:", resource.CounterName)
 	return nil
+}
+
+// simpleFixSizedObjectPool is a simple fix-sized object pool, implemented using chan.
+// objects are created on pool initialize, these objects will never be garbage collected.
+type simpleFixSizedObjectPool struct {
+	objects chan interface{}
+	// function to create object
+	create func() interface{}
+	// function to cleanup a object before borrow
+	cleanup func(interface{})
+}
+
+func newSimpleFixSizedObjectPool(size int, create func() interface{}, cleanup func(interface{})) *simpleFixSizedObjectPool {
+	pool := &simpleFixSizedObjectPool{
+		objects: make(chan interface{}, size),
+		create:  create,
+		cleanup: cleanup,
+	}
+
+	// pre populate all objects, so no need to create again during runtime
+	for i := 0; i < size; i++ {
+		pool.objects <- create()
+	}
+	return pool
+}
+
+func (p *simpleFixSizedObjectPool) BorrowObject() interface{} {
+	obj := <-p.objects
+	if p.cleanup != nil {
+		p.cleanup(obj)
+	}
+	return obj
+}
+
+func (p *simpleFixSizedObjectPool) ReturnObject(obj interface{}) {
+	p.objects <- obj
 }
