@@ -1,12 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"github.com/openmetric/a2graphite/ceilometer"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"log"
+	"os"
 	"time"
 )
+
+type logConfig struct {
+	Filename string `yaml:"filename"`
+	Level    string `yaml:"level"`
+}
 
 type graphiteConfig struct {
 	GraphiteHost   string        `yaml:"graphite_host"`
@@ -33,6 +39,7 @@ type profilerConfig struct {
 
 // Config is a2graphite main config
 type Config struct {
+	Log      *logConfig      `yaml:"log"`
 	Graphite *graphiteConfig `yaml:"graphite"`
 	Stats    *statsConfig    `yaml:"stats"`
 	Profiler *profilerConfig `yaml:"profiler"`
@@ -44,6 +51,10 @@ type Config struct {
 // NewConfig returns a default config instance
 func NewConfig() *Config {
 	config := &Config{
+		Log: &logConfig{
+			Filename: "/dev/stdout",
+			Level:    "warning",
+		},
 		Graphite: &graphiteConfig{
 			ReconnectDelay: 100 * time.Microsecond,
 			BufferSize:     100,
@@ -66,18 +77,21 @@ func NewConfig() *Config {
 
 func loadConfig(configFile string) *Config {
 	if configFile == "" {
-		log.Fatal("Missing required option `-config /path/to/config.yml`")
+		fmt.Println("Missing required option `-config /path/to/config.yml`")
+		os.Exit(1)
 	}
 
 	configContent, err := ioutil.ReadFile(configFile)
 	if err != nil {
-		log.Fatalln("Error reading config file:", err)
+		fmt.Println("Error reading config file:", err)
+		os.Exit(1)
 	}
 
 	config := NewConfig()
 	err = yaml.Unmarshal(configContent, config)
 	if err != nil {
-		log.Fatalln("Error reading config file:", err)
+		fmt.Println("Error reading config file:", err)
+		os.Exit(1)
 	}
 
 	return config

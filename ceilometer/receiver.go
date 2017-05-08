@@ -5,14 +5,16 @@ package ceilometer
 
 import (
 	"errors"
+	"github.com/op/go-logging"
 	"github.com/openmetric/a2graphite/stats"
 	"github.com/openmetric/graphite-client"
 	"github.com/ugorji/go/codec"
-	"log"
 	"net"
 	"strings"
 	"time"
 )
+
+var log = logging.MustGetLogger("ceilometer")
 
 // ceilometerResource represents the received msgpack contents,
 // only interested fields are listed.
@@ -151,7 +153,7 @@ func NewReceiver(config interface{}) (*Receiver, error) {
 
 	for counterName, targetName := range conf.Rules {
 		receiver.rules[counterName] = newRule(counterName, targetName, conf.AutoPrepandInstanceID)
-		log.Printf("Registered convention rule: %s -> %s\n", counterName, targetName)
+		log.Infof("Registered convention rule: %s -> %s\n", counterName, targetName)
 	}
 
 	return receiver, nil
@@ -168,7 +170,7 @@ func (receiver *Receiver) Start(emitChan chan *graphite.Metric) {
 
 	// NOTE start worker before listener, to prevent buffer pool filled up before workers started
 	for i := 0; i < receiver.config.Workers; i++ {
-		log.Println("Start Ceilometer Worker:", i)
+		log.Info("Start Ceilometer Worker:", i)
 		go receiver.worker()
 	}
 
@@ -221,7 +223,7 @@ func (receiver *Receiver) listener(listenAddr string) {
 			}
 		} else {
 			receiver.stats.UDPReceiveError.Inc()
-			log.Println("error read from udp", err)
+			log.Error("error read from udp", err)
 		}
 	}
 }
@@ -238,7 +240,7 @@ func (receiver *Receiver) worker() {
 
 		if err := codec.NewDecoderBytes(raw, msgpackHandle).Decode(resource); err != nil {
 			receiver.stats.MsgpackDecodeError.Inc()
-			log.Println("error unmarshalling msgpack", err)
+			log.Error("error unmarshalling msgpack", err)
 		} else {
 			receiver.stats.MsgpackDecodeOK.Inc()
 			metric := receiver.convert(resource)
@@ -263,11 +265,11 @@ func (receiver *Receiver) convert(resource *ceilometerResource) *graphite.Metric
 		}
 
 		receiver.stats.MetricConvertError.Inc()
-		log.Println("convert error:", err)
+		log.Error("convert error:", err)
 		return nil
 	}
 
 	receiver.stats.MetricConvertNoRule.Inc()
-	log.Println("no convert rule found for:", resource.CounterName)
+	log.Debug("no convert rule found for:", resource.CounterName)
 	return nil
 }

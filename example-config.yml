@@ -1,3 +1,7 @@
+log:
+  filename: "/dev/stderr"
+  level: "debug"
+
 graphite:
   graphite_host: 127.0.0.1
   graphite_port: 2003

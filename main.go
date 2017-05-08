@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
+	"github.com/op/go-logging"
 	"github.com/openmetric/a2graphite/ceilometer"
 	"github.com/openmetric/graphite-client"
-	"log"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
@@ -13,11 +13,16 @@ import (
 	"time"
 )
 
+var log = logging.MustGetLogger("main")
+
 func main() {
 	configFile := flag.String("config", "", "Path to the `config file`.")
 	flag.Parse()
 
 	config := loadConfig(*configFile)
+
+	// setup log facility
+	setupLogging(config.Log)
 
 	var receivers []Receiver
 	metrics := make(chan *graphite.Metric, 10000)
@@ -30,7 +35,7 @@ func main() {
 		config.Graphite.ReconnectDelay,
 	)
 	if err != nil {
-		log.Fatalln("Failed to create graphite client:", err)
+		log.Fatal("Failed to create graphite client:", err)
 	}
 	go client.SendChan(metrics)
 
@@ -44,7 +49,7 @@ func main() {
 			config.Stats.ReconnectDelay,
 		)
 		if err != nil {
-			log.Fatalln("Failed to create graphite client for stats:", err)
+			log.Fatal("Failed to create graphite client for stats:", err)
 		}
 	}
 
@@ -54,20 +59,20 @@ func main() {
 			receivers = append(receivers, ceilo)
 			ceilo.Start(metrics)
 		} else {
-			log.Fatalln("Failed to initialize ceilometer receiver:", err)
+			log.Fatal("Failed to initialize ceilometer receiver:", err)
 		}
 	}
 
 	// check if there are receivers enabled
 	if len(receivers) == 0 {
-		log.Fatalln("You must enable at least one receiver.")
+		log.Fatal("You must enable at least one receiver.")
 	}
 
 	// enable profiler if configured
 	if config.Profiler.Enabled {
 		go func() {
-			log.Println("Profiled enabled, on:", config.Profiler.ListenAddr)
-			log.Println(http.ListenAndServe(config.Profiler.ListenAddr, nil))
+			log.Info("Profiler enabled, on:", config.Profiler.ListenAddr)
+			log.Info(http.ListenAndServe(config.Profiler.ListenAddr, nil))
 		}()
 	}
 
@@ -84,16 +89,16 @@ func main() {
 	for {
 		select {
 		case <-c:
-			log.Println("Got stop signal, stopping...")
+			log.Info("Got stop signal, stopping ...")
 			for _, receiver := range receivers {
-				log.Println("Stopping", receiver.GetName())
+				log.Info("Stopping", receiver.GetName())
 				receiver.Stop()
 			}
-			log.Println("Shuting down graphite client ...")
+			log.Info("Shuting down graphite client ...")
 			client.Shutdown(1 * time.Second)
-			log.Println("Shuting down graphite client for stats ...")
+			log.Info("Shuting down graphite client for stats ...")
 			statsClient.Shutdown(1 * time.Second)
-			log.Println("Quit.")
+			log.Info("Quit.")
 			return
 		case <-statsTicker:
 			for _, receiver := range receivers {
