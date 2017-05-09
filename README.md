@@ -20,7 +20,8 @@ graphite:
   prefix: ""
   # delay time before reconnect on connection failure
   reconnect_delay: 100ms
-  # receiver generated metrics are buffered, if network is fast enough to send all metrics, this buffer does not need to be too large
+  # receiver generated metrics are buffered, if network is fast enough to send
+  # all metrics, this buffer does not need to be too large
   buffer_size: 100
 
 # internal stats
@@ -29,7 +30,8 @@ stats:
   enabled: true
   # interval of internal statistics
   interval: 60s
-  # the following settings are same as graphite section, you can specify a different prefix or even different graphite server
+  # the following settings are same as graphite section, you can specify a different
+  # prefix or even different graphite server
   host: "127.0.0.1"
   port: 2003
   reconnect_delay: 100ms
@@ -61,8 +63,8 @@ ceilometer:
     "disk.free": "disk.mount-{MountPoint}.size.free"
     "disk.device.capacity": "disk.device-{DiskName}.size.capacity"
     "network.incoming.bytes.rate": "network.{VnicName}.bytes.incoming"
-  # it's likely that graphite metric names should contain {InstanceID}, if ${auto_prepand_instance_id} is set to true,
-  # {InstanceID} is prepended to all rules values.
+  # it's likely that graphite metric names should contain {InstanceID}, if ${auto_prepand_instance_id}
+  # is set to true, {InstanceID} is prepended to all rules values.
   auto_prepand_instance_id: true
 ```
 
