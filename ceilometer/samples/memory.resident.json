@@ -1,0 +1,56 @@
+{
+    "counter_name": "memory.resident",
+    "user_id": "3b2431322776452eb1457adadc2db775",
+    "message_signature": "172f3607194c7b3980d75852bd1c3781987aed0ef9d5214e4af94cacc99a4406",
+    "timestamp": "2017-04-10T07:18:40Z",
+    "resource_id": "dc603e23-b22a-4156-b33a-117c8cd34280",
+    "message_id": "ec0c1286-1dbd-11e7-a777-6c92bf236be0",
+    "source": "openstack",
+    "counter_unit": "MB",
+    "counter_volume": 853,
+    "project_id": "2ea0880b990147a0b1940f0648cfd8b2",
+    "resource_metadata": {
+        "status": "active",
+        "instance_id": "dc603e23-b22a-4156-b33a-117c8cd34280",
+        "ramdisk_id": null,
+        "display_name": "Redacted Instance Name ******",
+        "name": "instance-000010bb",
+        "disk_gb": 40,
+        "state": "active",
+        "kernel_id": null,
+        "image": {
+            "id": "cc5b9708-d744-4b73-be88-cacb7d846fc7",
+            "links": [
+                {
+                    "href": "Redacted url ******",
+                    "rel": "bookmark"
+                }
+            ],
+            "name": "Redacted Image Name ******"
+        },
+        "ephemeral_gb": 0,
+        "vcpus": 8,
+        "memory_mb": 8192,
+        "instance_type": "8cpu-8ram-40disk",
+        "host": "60b8a5487203479f6b4cf0d7419517e00f59eea76dc71620b51d2d93",
+        "root_gb": 40,
+        "image_ref": "cc5b9708-d744-4b73-be88-cacb7d846fc7",
+        "flavor": {
+            "name": "8cpu-8ram-40disk",
+            "links": [
+                {
+                    "href": "Redacted url ******",
+                    "rel": "bookmark"
+                }
+            ],
+            "ram": 8192,
+            "ephemeral": 0,
+            "vcpus": 8,
+            "disk": 40,
+            "id": "91835509-925e-436e-b518-4f7ad2563d96"
+        },
+        "OS-EXT-AZ:availability_zone": "nova",
+        "image_ref_url": "Redacted url ******"
+    },
+    "counter_type": "gauge"
+}

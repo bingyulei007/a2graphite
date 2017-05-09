@@ -1,0 +1,57 @@
+{
+    "counter_name": "disk.device.read.bytes.rate",
+    "user_id": "ee898f89316046b29cbed9389acbb939",
+    "message_signature": "15d62ec8dca6fd138cdcbc7951bfe0ab0ac10e4494c5fd1939cead4a4d08dab1",
+    "timestamp": "2017-04-10T07:18:36Z",
+    "resource_id": "ec3754d3-3362-4ad7-9169-ed27790de5a0-vda",
+    "message_id": "e98aa270-1dbd-11e7-9f3c-6c92bf236bf8",
+    "source": "openstack",
+    "counter_unit": "KB/s",
+    "counter_volume": 0.0,
+    "project_id": "967c779ec6784385b8affbb045d836ed",
+    "resource_metadata": {
+        "status": "active",
+        "instance_id": "ec3754d3-3362-4ad7-9169-ed27790de5a0",
+        "ramdisk_id": null,
+        "display_name": "Redacted Instance Name ******",
+        "name": "instance-00000880",
+        "disk_gb": 60,
+        "state": "active",
+        "kernel_id": null,
+        "image": {
+            "id": "cc5b9708-d744-4b73-be88-cacb7d846fc7",
+            "links": [
+                {
+                    "href": "Redacted url ******",
+                    "rel": "bookmark"
+                }
+            ],
+            "name": "Redacted Image Name ******"
+        },
+        "ephemeral_gb": 0,
+        "vcpus": 4,
+        "memory_mb": 16384,
+        "instance_type": "StandFlavor_4C_16G_60D",
+        "host": "63061ccfeb9bfb07d001c9fefe991dec5e568260ed656f47809a35b4",
+        "root_gb": 60,
+        "image_ref": "cc5b9708-d744-4b73-be88-cacb7d846fc7",
+        "disk_name": "vda",
+        "flavor": {
+            "name": "StandFlavor_4C_16G_60D",
+            "links": [
+                {
+                    "href": "Redacted url ******",
+                    "rel": "bookmark"
+                }
+            ],
+            "ram": 16384,
+            "ephemeral": 0,
+            "vcpus": 4,
+            "disk": 60,
+            "id": "7e569712-0ab2-4e49-abfa-ab2148eb72ab"
+        },
+        "OS-EXT-AZ:availability_zone": "nova",
+        "image_ref_url": "Redacted url ******"
+    },
+    "counter_type": "gauge"
+}

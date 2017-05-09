@@ -1,0 +1,61 @@
+{
+    "counter_name": "disk.write.requests.rate",
+    "user_id": "ee898f89316046b29cbed9389acbb939",
+    "message_signature": "c0e4121898b28cdde4a0aad106c68b61fefd9e6a6c940a494a69f08e77ab32a2",
+    "timestamp": "2017-04-10T07:18:36Z",
+    "resource_id": "587e102c-0085-42a9-9e58-904ce5d28e7a",
+    "message_id": "e9b295e6-1dbd-11e7-81d7-6c92bf236bb8",
+    "source": "openstack",
+    "counter_unit": "KB/s",
+    "counter_volume": 4842.6943359375,
+    "project_id": "967c779ec6784385b8affbb045d836ed",
+    "resource_metadata": {
+        "status": "active",
+        "instance_id": "587e102c-0085-42a9-9e58-904ce5d28e7a",
+        "ramdisk_id": null,
+        "display_name": "Redacted Instance Name ******",
+        "name": "instance-00000889",
+        "disk_gb": 40,
+        "state": "active",
+        "kernel_id": null,
+        "image": {
+            "id": "cc5b9708-d744-4b73-be88-cacb7d846fc7",
+            "links": [
+                {
+                    "href": "Redacted url ******",
+                    "rel": "bookmark"
+                }
+            ],
+            "name": "Redacted Image Name ******"
+        },
+        "ephemeral_gb": 0,
+        "vcpus": 8,
+        "memory_mb": 32768,
+        "instance_type": "StandFlavor_8C_32G_40D",
+        "host": "e2aa92e738e88adda6e5bd72364fb467a8322bc9a5113c4256ffbd8c",
+        "root_gb": 40,
+        "image_ref": "cc5b9708-d744-4b73-be88-cacb7d846fc7",
+        "device": [
+            "vda",
+            "vdb",
+            "hdd"
+        ],
+        "flavor": {
+            "name": "StandFlavor_8C_32G_40D",
+            "links": [
+                {
+                    "href": "Redacted url ******",
+                    "rel": "bookmark"
+                }
+            ],
+            "ram": 32768,
+            "ephemeral": 0,
+            "vcpus": 8,
+            "disk": 40,
+            "id": "3afb00b5-096d-4613-abeb-e61a1bf7e60b"
+        },
+        "OS-EXT-AZ:availability_zone": "nova",
+        "image_ref_url": "Redacted url ******"
+    },
+    "counter_type": "gauge"
+}

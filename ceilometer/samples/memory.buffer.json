@@ -1,0 +1,50 @@
+{
+    "counter_name": "memory.buffer",
+    "user_id": "15a007e309404ae7a36a4c045d2572d8",
+    "message_signature": "0f251fcf97d4897fe68f4fced3d62aec03085c44c1b4eef72a8608b96d4fe2d3",
+    "timestamp": "2017-04-10T07:18:36Z",
+    "resource_id": "03ab95c6-7b2f-4941-8688-229e0556e203",
+    "message_id": "e9acf154-1dbd-11e7-b039-6c92bf236e48",
+    "source": "openstack",
+    "counter_unit": "MB",
+    "counter_volume": 0,
+    "project_id": "ff0ab054259e4515872f5b3902584c7d",
+    "resource_metadata": {
+        "status": "active",
+        "instance_id": "03ab95c6-7b2f-4941-8688-229e0556e203",
+        "ramdisk_id": null,
+        "display_name": "Redacted Instance Name ******",
+        "name": "instance-00000ad4",
+        "disk_gb": 0,
+        "state": "active",
+        "kernel_id": null,
+        "image": {
+            "id": "2855b735-f5e1-4643-bf40-e8f06de87d45",
+            "name": "Redacted Image Name ******"
+        },
+        "ephemeral_gb": 0,
+        "vcpus": 4,
+        "memory_mb": 4096,
+        "instance_type": "4cpu-4ram-0disk-ipsan",
+        "host": "238a467bb69f91c773c5c15bb9abc79e6445448e8a1577759a3238aa",
+        "root_gb": 0,
+        "image_ref": "2855b735-f5e1-4643-bf40-e8f06de87d45",
+        "flavor": {
+            "name": "4cpu-4ram-0disk-ipsan",
+            "links": [
+                {
+                    "href": "Redacted url ******",
+                    "rel": "bookmark"
+                }
+            ],
+            "ram": 4096,
+            "ephemeral": 0,
+            "vcpus": 4,
+            "disk": 0,
+            "id": "397dfc95-bd66-4409-b266-1220b4f5f303"
+        },
+        "OS-EXT-AZ:availability_zone": "nova",
+        "image_ref_url": "Redacted url ******"
+    },
+    "counter_type": "gauge"
+}

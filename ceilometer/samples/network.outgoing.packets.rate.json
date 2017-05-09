@@ -1,0 +1,22 @@
+{
+    "counter_name": "network.outgoing.packets.rate",
+    "user_id": "ee898f89316046b29cbed9389acbb939",
+    "message_signature": "1fa6c473e89ab62e1e28b751807204dfbb7542e4d38b2a386db412fd0c2d82fc",
+    "timestamp": "2017-04-10T07:18:36Z",
+    "resource_id": "instance-00000889-587e102c-0085-42a9-9e58-904ce5d28e7a-tap08fa968e-f0",
+    "message_id": "e9a44a5e-1dbd-11e7-81d7-6c92bf236bb8",
+    "source": "openstack",
+    "counter_unit": "packet/s",
+    "counter_volume": 0.0,
+    "project_id": "967c779ec6784385b8affbb045d836ed",
+    "resource_metadata": {
+        "name": "tap08fa968e-f0",
+        "parameters": {},
+        "fref": null,
+        "vnic_name": "tap08fa968e-f0",
+        "instance_id": "587e102c-0085-42a9-9e58-904ce5d28e7a",
+        "instance_type": "3afb00b5-096d-4613-abeb-e61a1bf7e60b",
+        "mac": "fa:16:3e:e9:87:a5"
+    },
+    "counter_type": "gauge"
+}
