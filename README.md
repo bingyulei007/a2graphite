@@ -14,8 +14,14 @@ log:
 
 # settings for graphite backend
 graphite:
-  host: "127.0.0.1"
-  port: 2003
+  # graphite url, valid forms:
+  # - tcp://127.0.0.1:2003
+  # - udp://127.0.0.1:2004
+  # - pickle://example.com:2005  
+  # - 127.0.0.1:2003    # protocol defaults to "tcp" if omitted
+  # - tcp://example.com # port defaults to "2003" if omitted
+  # - example.com       # if both protocol and ports are omitted, use tcp://${url}:2003
+  url: "tcp://127.0.0.1:2003"
   # all metrics' names are prefixed with "${prefix}" before sent out
   prefix: ""
   # delay time before reconnect on connection failure
@@ -31,9 +37,8 @@ stats:
   # interval of internal statistics
   interval: 60s
   # the following settings are same as graphite section, you can specify a different
-  # prefix or even different graphite server
-  host: "127.0.0.1"
-  port: 2003
+  # prefix or even different graphite server for internal stats
+  url: tcp://127.0.0.1:2003
   reconnect_delay: 100ms
   prefix: "stats."
   buffer_size: 100

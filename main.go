@@ -29,9 +29,8 @@ func main() {
 	metrics := make(chan *graphite.Metric, 10000)
 
 	// start graphite client for receiving metrics
-	client, err := graphite.NewTCPClient(
-		config.Graphite.Host,
-		config.Graphite.Port,
+	client, err := graphite.NewClient(
+		config.Graphite.URL,
 		config.Graphite.Prefix,
 		config.Graphite.ReconnectDelay,
 	)
@@ -43,9 +42,8 @@ func main() {
 	var statsClient *graphite.Client
 	if config.Stats.Enabled {
 		// start graphite client for stats
-		statsClient, err = graphite.NewTCPClient(
-			config.Stats.Host,
-			config.Stats.Port,
+		statsClient, err = graphite.NewClient(
+			config.Stats.URL,
 			config.Stats.Prefix,
 			config.Stats.ReconnectDelay,
 		)

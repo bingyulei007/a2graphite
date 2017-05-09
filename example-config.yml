@@ -3,15 +3,13 @@ log:
   level: "debug"
 
 graphite:
-  host: 127.0.0.1
-  port: 2003
+  url: tcp://127.0.0.1:2003
   reconnect_delay: 10ms
   prefix: a2graphite.
   buffer_size: 100
 
 stats:
-  host: 127.0.0.1
-  port: 2003
+  url: tcp://127.0.0.1:2003
   reconnect_delay: 10ms
   prefix: a2graphite.stats.
   interval: 10s

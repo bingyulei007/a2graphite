@@ -15,8 +15,7 @@ type logConfig struct {
 }
 
 type graphiteConfig struct {
-	Host           string        `yaml:"host"`
-	Port           int           `yaml:"port"`
+	URL            string        `yaml:"url"`
 	ReconnectDelay time.Duration `yaml:"reconnect_delay"`
 	Prefix         string        `yaml:"prefix"`
 	BufferSize     int           `yaml:"buffer_size"`
@@ -25,8 +24,7 @@ type graphiteConfig struct {
 type statsConfig struct {
 	Enabled        bool          `yaml:"enabled"`
 	Interval       time.Duration `yaml:"interval"`
-	Host           string        `yaml:"host"`
-	Port           int           `yaml:"port"`
+	URL            string        `yaml:"url"`
 	ReconnectDelay time.Duration `yaml:"reconnect_delay"`
 	Prefix         string        `yaml:"prefix"`
 	BufferSize     int           `yaml:"buffer_size"`
