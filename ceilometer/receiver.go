@@ -166,9 +166,7 @@ func NewReceiver(config interface{}) (*Receiver, error) {
 		),
 		udpMsgPool: newSimpleFixSizedObjectPool(
 			conf.BufferSize,
-			// NOTE most network interfaces' MTU is less equal to 1500,
-			// however it's still possible to receiver big packets.
-			func() interface{} { return make([]byte, 4096) },
+			func() interface{} { return make([]byte, conf.UDPMsgMaxSize) },
 			nil,
 		),
 	}

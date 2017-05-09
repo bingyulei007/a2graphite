@@ -3,6 +3,8 @@ Changes
 
 **Master (not released)**
 
+  - improvement: make udp msg max size configurable
+
 **0.2 (2017-05.09)**
 
   - bugfix: use correct flag to open log file

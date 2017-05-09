@@ -15,13 +15,17 @@ type Config struct {
 	Rules map[string]string `yaml:"rules"`
 	// Prepend `prefix` to all target names
 	Prefix string `yaml:"prefix"`
+	// most network interface's MTU is less equal to 1500,
+	// however it's still possible to receive packets larger then 1500.
+	UDPMsgMaxSize int `yaml:"udp_msg_max_size"`
 }
 
 // NewConfig implements the required NewConfig() method
 func NewConfig() *Config {
 	return &Config{
-		Enabled:    false,
-		BufferSize: 100,
-		Workers:    4,
+		Enabled:       false,
+		BufferSize:    100,
+		Workers:       4,
+		UDPMsgMaxSize: 4096,
 	}
 }
