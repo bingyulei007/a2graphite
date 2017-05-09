@@ -30,8 +30,8 @@ func main() {
 
 	// start graphite client for receiving metrics
 	client, err := graphite.NewTCPClient(
-		config.Graphite.GraphiteHost,
-		config.Graphite.GraphitePort,
+		config.Graphite.Host,
+		config.Graphite.Port,
 		config.Graphite.Prefix,
 		config.Graphite.ReconnectDelay,
 	)
@@ -44,8 +44,8 @@ func main() {
 	if config.Stats.Enabled {
 		// start graphite client for stats
 		statsClient, err = graphite.NewTCPClient(
-			config.Stats.GraphiteHost,
-			config.Stats.GraphitePort,
+			config.Stats.Host,
+			config.Stats.Port,
 			config.Stats.Prefix,
 			config.Stats.ReconnectDelay,
 		)

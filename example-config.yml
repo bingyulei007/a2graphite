@@ -1,19 +1,20 @@
 log:
-  filename: "/dev/stderr"
+  filename: "/dev/stdout"
   level: "debug"
 
 graphite:
-  graphite_host: 127.0.0.1
-  graphite_port: 2003
-  reconnect_delay: 1s
+  host: 127.0.0.1
+  port: 2003
+  reconnect_delay: 10ms
   prefix: a2graphite
-  buffer_size: 1000
+  buffer_size: 100
 
 stats:
-  graphite_host: 127.0.0.1
-  graphite_port: 2003
-  reconnect_delay: 1s
+  host: 127.0.0.1
+  port: 2003
+  reconnect_delay: 10ms
   prefix: a2graphite.stats
+  interval: 10s
 
 profiler:
   enabled: false
@@ -61,23 +62,3 @@ ceilometer:
     "network.outgoing.bytes.rate": "network.{VnicName}.bytes.outgoing"
     "network.incoming.packets.rate": "network.{VnicName}.packets.incoming"
     "network.outgoing.packets.rate": "network.{VnicName}.packets.outgoing"
-
-    "vcpus": null
-    "memory": null
-    "instance": null
-
-    "image": null
-    "image.size": null
-
-    "volume": null
-    "volume.size": null
-    "volume.create.end": null
-    "volume.delete.end": null
-
-    "disk.root.size": null
-    "disk.ephemeral.size": null
-
-    "network.services.vpn": null
-    "network.services.vpn.connections": null
-    "network.services.firewall": null
-    "network.services.firewall.policy": null

@@ -15,8 +15,8 @@ type logConfig struct {
 }
 
 type graphiteConfig struct {
-	GraphiteHost   string        `yaml:"graphite_host"`
-	GraphitePort   int           `yaml:"graphite_port"`
+	Host           string        `yaml:"host"`
+	Port           int           `yaml:"port"`
 	ReconnectDelay time.Duration `yaml:"reconnect_delay"`
 	Prefix         string        `yaml:"prefix"`
 	BufferSize     int           `yaml:"buffer_size"`
@@ -25,8 +25,8 @@ type graphiteConfig struct {
 type statsConfig struct {
 	Enabled        bool          `yaml:"enabled"`
 	Interval       time.Duration `yaml:"interval"`
-	GraphiteHost   string        `yaml:"graphite_host"`
-	GraphitePort   int           `yaml:"graphite_port"`
+	Host           string        `yaml:"host"`
+	Port           int           `yaml:"port"`
 	ReconnectDelay time.Duration `yaml:"reconnect_delay"`
 	Prefix         string        `yaml:"prefix"`
 	BufferSize     int           `yaml:"buffer_size"`
@@ -53,7 +53,7 @@ func NewConfig() *Config {
 	config := &Config{
 		Log: &logConfig{
 			Filename: "/dev/stdout",
-			Level:    "warning",
+			Level:    "info",
 		},
 		Graphite: &graphiteConfig{
 			ReconnectDelay: 100 * time.Microsecond,
@@ -64,6 +64,7 @@ func NewConfig() *Config {
 			Interval:       60 * time.Second,
 			ReconnectDelay: 100 * time.Microsecond,
 			BufferSize:     100,
+			Prefix:         "stats",
 		},
 		Profiler: &profilerConfig{
 			Enabled:    false,
