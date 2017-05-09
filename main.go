@@ -93,7 +93,7 @@ func main() {
 		case <-c:
 			log.Info("Got stop signal, stopping ...")
 			for _, receiver := range receivers {
-				log.Info("Stopping", receiver.GetName())
+				log.Info("Stopping", receiver.GetName(), "...")
 				receiver.Stop()
 			}
 			log.Info("Shuting down graphite client ...")

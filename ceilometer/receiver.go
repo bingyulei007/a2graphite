@@ -11,6 +11,7 @@ import (
 	"github.com/ugorji/go/codec"
 	"net"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -131,6 +132,9 @@ type Receiver struct {
 
 	resourceObjectPool *simpleFixSizedObjectPool
 	udpMsgPool         *simpleFixSizedObjectPool
+
+	stopListeners []chan struct{}
+	stopWG        sync.WaitGroup
 }
 
 // NewReceiver implements the required NewReceiver() method
@@ -191,17 +195,24 @@ func (receiver *Receiver) Start(emitChan chan *graphite.Metric) {
 	// NOTE start worker before listener, to prevent buffer pool filled up before workers started
 	for i := 0; i < receiver.config.Workers; i++ {
 		log.Info("Start Ceilometer Worker:", i)
+		receiver.stopWG.Add(1)
 		go receiver.worker()
 	}
 
 	for _, listenAddr := range receiver.config.ListenAddrs {
-		go receiver.listener(listenAddr)
+		stop := make(chan struct{})
+		receiver.stopListeners = append(receiver.stopListeners, stop)
+		go receiver.listener(listenAddr, stop)
 	}
 }
 
 // Stop implements Receiver's Stop method
 func (receiver *Receiver) Stop() {
-	// TODO
+	for _, stop := range receiver.stopListeners {
+		close(stop)
+	}
+
+	receiver.stopWG.Wait()
 }
 
 // Healthy implements Receiver's Healthy method
@@ -216,7 +227,7 @@ func (receiver *Receiver) Stats() []*graphite.Metric {
 	return stats.ToGraphiteMetrics(receiver.stats)
 }
 
-func (receiver *Receiver) listener(listenAddr string) {
+func (receiver *Receiver) listener(listenAddr string, stop <-chan struct{}) {
 	addr, err := net.ResolveUDPAddr("udp", listenAddr)
 	if err != nil {
 		log.Fatal(err)
@@ -227,7 +238,13 @@ func (receiver *Receiver) listener(listenAddr string) {
 		log.Fatal(err)
 	}
 
-	defer conn.Close()
+	// close buffer to notify workers to stop
+	defer close(receiver.udpMsgBuffer)
+
+	go func(conn *net.UDPConn) {
+		<-stop
+		conn.Close()
+	}(conn)
 
 	for {
 		raw := receiver.udpMsgPool.BorrowObject().([]byte)
@@ -239,6 +256,10 @@ func (receiver *Receiver) listener(listenAddr string) {
 				receiver.stats.UDPDropped.Inc()
 			}
 		} else {
+			if strings.Contains(err.Error(), "use of closed network connection") {
+				// conn was closed (by us, not other end), it means receiver was asked to stop
+				break
+			}
 			receiver.stats.UDPReceiveError.Inc()
 			log.Error("error read from udp", err)
 		}
@@ -246,10 +267,16 @@ func (receiver *Receiver) listener(listenAddr string) {
 }
 
 func (receiver *Receiver) worker() {
+	defer receiver.stopWG.Done()
+
 	// NOTE Can `msgpackHandle` be reused safely? Documentation not found.
 	msgpackHandle := new(codec.MsgpackHandle)
 	for {
-		raw := <-receiver.udpMsgBuffer
+		raw, ok := <-receiver.udpMsgBuffer
+		if !ok {
+			// buffer was closed, so has listener stopped, let's return
+			break
+		}
 		receiver.stats.MsgpackReceived.Inc()
 
 		resource := receiver.resourceObjectPool.BorrowObject().(*ceilometerResource)
