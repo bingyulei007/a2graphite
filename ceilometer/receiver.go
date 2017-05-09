@@ -249,7 +249,12 @@ func (receiver *Receiver) listener(listenAddr string, stop <-chan struct{}) {
 
 	for {
 		raw := receiver.udpMsgPool.BorrowObject().([]byte)
-		if _, _, err := conn.ReadFromUDP(raw); err == nil {
+		if l, _, err := conn.ReadFromUDP(raw); err == nil {
+			if l == 0 {
+				receiver.stats.UDPReceiveError.Inc()
+				log.Error("received udp message with len=0")
+				continue
+			}
 			receiver.stats.UDPReceived.Inc()
 			select {
 			case receiver.udpMsgBuffer <- raw:
