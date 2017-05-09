@@ -18,7 +18,7 @@ func setupLogging(config *logConfig) {
 	format := logging.MustStringFormatter(`[%{time:15:04:05.000}][%{module}][%{level}] %{message}`)
 	logging.SetFormatter(format)
 
-	logFile, err := os.OpenFile(config.Filename, os.O_RDWR|os.O_CREATE, 0644)
+	logFile, err := os.OpenFile(config.Filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("Failed to open logfile:", err)
 		os.Exit(1)
