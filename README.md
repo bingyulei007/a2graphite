@@ -16,7 +16,7 @@ log:
 graphite:
   host: "127.0.0.1"
   port: 2003
-  # all metrics' names are prefixed with "${prefix}." before sent out
+  # all metrics' names are prefixed with "${prefix}" before sent out
   prefix: ""
   # delay time before reconnect on connection failure
   reconnect_delay: 100ms
@@ -35,7 +35,7 @@ stats:
   host: "127.0.0.1"
   port: 2003
   reconnect_delay: 100ms
-  prefix: "stats"
+  prefix: "stats."
   buffer_size: 100
 
 # whether to enable profiler

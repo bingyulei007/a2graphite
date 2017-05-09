@@ -58,13 +58,14 @@ func NewConfig() *Config {
 		Graphite: &graphiteConfig{
 			ReconnectDelay: 100 * time.Microsecond,
 			BufferSize:     100,
+			Prefix:         "a2graphite.",
 		},
 		Stats: &statsConfig{
 			Enabled:        true,
 			Interval:       60 * time.Second,
 			ReconnectDelay: 100 * time.Microsecond,
 			BufferSize:     100,
-			Prefix:         "stats",
+			Prefix:         "a2graphite-stats.",
 		},
 		Profiler: &profilerConfig{
 			Enabled:    false,
