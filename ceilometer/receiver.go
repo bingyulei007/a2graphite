@@ -168,7 +168,7 @@ func NewReceiver(config interface{}) (*Receiver, error) {
 			conf.BufferSize,
 			// NOTE most network interfaces' MTU is less equal to 1500,
 			// however it's still possible to receiver big packets.
-			func() interface{} { return make([]byte, 1500) },
+			func() interface{} { return make([]byte, 4096) },
 			nil,
 		),
 	}
