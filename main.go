@@ -87,6 +87,8 @@ func main() {
 		statsTicker = make(chan time.Time)
 	}
 
+	healthCheckTicker := time.Tick(1 * time.Second)
+
 	var gcstats debug.GCStats
 	for {
 		select {
@@ -112,6 +114,12 @@ func main() {
 			statsClient.SendSimple("gc.TotalPause", gcstats.PauseTotal, 0)
 			if gcstats.NumGC > 0 {
 				statsClient.SendSimple("gc.LastPause", gcstats.Pause[0], 0)
+			}
+		case <-healthCheckTicker:
+			for _, receiver := range receivers {
+				if !receiver.Healthy() {
+					log.Error(receiver.GetName(), "claims to be unhealthy")
+				}
 			}
 		}
 	}

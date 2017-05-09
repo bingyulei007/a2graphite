@@ -217,8 +217,11 @@ func (receiver *Receiver) Stop() {
 
 // Healthy implements Receiver's Healthy method
 func (receiver *Receiver) Healthy() bool {
-	// TODO
-	return false
+	// if udpMsgBuffer is full, it indicates something was wrong
+	if len(receiver.udpMsgBuffer) == receiver.config.BufferSize {
+		return false
+	}
+	return true
 }
 
 // Stats implements Receiver's Stats method
