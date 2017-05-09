@@ -69,9 +69,7 @@ ceilometer:
     "disk.free": "disk.mount-{MountPoint}.size.free"
     "disk.device.capacity": "disk.device-{DiskName}.size.capacity"
     "network.incoming.bytes.rate": "network.{VnicName}.bytes.incoming"
-  # it's likely that graphite metric names should contain {InstanceID}, if ${auto_prepand_instance_id}
-  # is set to true, {InstanceID} is prepended to all rules values.
-  auto_prepand_instance_id: true
+  prefix: "ceilometer.{InstanceID}."
 ```
 
 ## Install and run

@@ -13,16 +13,15 @@ type Config struct {
 	// List of convertion rules, map key is message's CounterName, map value is graphite.Metric's Name.
 	// Target metric name can contains substitute key: {InstanceID}, {DiskName}, {MountPoint}, {VnicName}
 	Rules map[string]string `yaml:"rules"`
-	// Automatically prepand '{InstanceID}' to rule's TargetName, so no need to write {InstanceID} in each rule
-	AutoPrepandInstanceID bool `yaml:"auto_prepand_instance_id"`
+	// Prepend `prefix` to all target names
+	Prefix string `yaml:"prefix"`
 }
 
 // NewConfig implements the required NewConfig() method
 func NewConfig() *Config {
 	return &Config{
-		Enabled:               false,
-		BufferSize:            100,
-		Workers:               4,
-		AutoPrepandInstanceID: false,
+		Enabled:    false,
+		BufferSize: 100,
+		Workers:    4,
 	}
 }

@@ -53,10 +53,8 @@ type rule struct {
 }
 
 // newRule creates a rule object
-func newRule(counterName string, targetName string, autoPrepandInstanceID bool) *rule {
-	if autoPrepandInstanceID {
-		targetName = "{InstanceID}." + targetName
-	}
+func newRule(counterName string, targetName string, prefix string) *rule {
+	targetName = prefix + targetName
 
 	r := &rule{
 		TargetName: targetName,
@@ -176,7 +174,7 @@ func NewReceiver(config interface{}) (*Receiver, error) {
 	}
 
 	for counterName, targetName := range conf.Rules {
-		receiver.rules[counterName] = newRule(counterName, targetName, conf.AutoPrepandInstanceID)
+		receiver.rules[counterName] = newRule(counterName, targetName, conf.Prefix)
 		log.Infof("Registered convention rule: %s -> %s\n", counterName, targetName)
 	}
 

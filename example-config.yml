@@ -23,7 +23,7 @@ ceilometer:
   workers: 4
   listen_addrs:
     - ":4952"
-  auto_prepand_instance_id: true
+  prefix: "ceilometer.{InstanceID}."
   rules:
     "cpu_util": "cpu.cpu.percent.util"
 
