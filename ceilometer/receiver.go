@@ -109,7 +109,7 @@ func (r *rule) convert(resource *ceilometerResource) (*graphite.Metric, error) {
 }
 
 type ceiloStats struct {
-	UDPReceived            stats.Counter `stats:"celiometer.udp.Received"`
+	UDPReceived            stats.Counter `stats:"ceilometer.udp.Received"`
 	UDPReceiveError        stats.Counter `stats:"ceilometer.udp.ReceiveError"`
 	UDPBufferSize          stats.Gauge   `stats:"ceilometer.udp.BufferSize"`
 	UDPDropped             stats.Counter `stats:"ceilometer.udp.dropped"`
