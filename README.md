@@ -23,6 +23,7 @@ graphite:
   # - example.com       # if both protocol and ports are omitted, use tcp://${url}:2003
   url: "tcp://127.0.0.1:2003"
   # all metrics' names are prefixed with "${prefix}" before sent out
+  # if prefix contains "{host}", "{host}" would be replace by hostname
   prefix: ""
   # delay time before reconnect on connection failure
   reconnect_delay: 100ms
@@ -40,7 +41,7 @@ stats:
   # prefix or even different graphite server for internal stats
   url: tcp://127.0.0.1:2003
   reconnect_delay: 100ms
-  prefix: "stats."
+  prefix: "a2graphite.{host}.stats."
   buffer_size: 100
 
 # whether to enable profiler

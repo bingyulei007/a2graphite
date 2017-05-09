@@ -11,7 +11,7 @@ graphite:
 stats:
   url: tcp://127.0.0.1:2003
   reconnect_delay: 10ms
-  prefix: a2graphite.stats.
+  prefix: a2graphite.{host}.stats.
   interval: 10s
 
 profiler:

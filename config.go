@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -93,6 +94,12 @@ func loadConfig(configFile string) *Config {
 		fmt.Println("Error reading config file:", err)
 		os.Exit(1)
 	}
+
+	// substitute "{host}" in "Prefix"
+	hostname, _ := os.Hostname()
+	hostname = strings.Replace(hostname, ".", "-", -1)
+	config.Graphite.Prefix = strings.Replace(config.Graphite.Prefix, "{host}", hostname, -1)
+	config.Stats.Prefix = strings.Replace(config.Stats.Prefix, "{host}", hostname, -1)
 
 	return config
 }
