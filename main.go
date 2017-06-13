@@ -109,9 +109,9 @@ func main() {
 
 			debug.ReadGCStats(&gcstats)
 			statsClient.SendSimple("gc.NumGC", gcstats.NumGC, 0)
-			statsClient.SendSimple("gc.TotalPause", gcstats.PauseTotal, 0)
+			statsClient.SendSimple("gc.TotalPause", gcstats.PauseTotal.Nanoseconds(), 0)
 			if gcstats.NumGC > 0 {
-				statsClient.SendSimple("gc.LastPause", gcstats.Pause[0], 0)
+				statsClient.SendSimple("gc.LastPause", gcstats.Pause[0].Nanoseconds(), 0)
 			}
 		case <-healthCheckTicker:
 			for _, receiver := range receivers {
