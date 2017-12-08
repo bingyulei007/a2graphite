@@ -56,7 +56,7 @@ ceilometer:
     "disk.device.read.requests.rate": "disk.device-{DiskName}.requests.read"
     "disk.device.write.requests.rate": "disk.device-{DiskName}.requests.write"
 
-    "network.incoming.bytes.rate": "network.{VnicName}.bytes.incoming"
-    "network.outgoing.bytes.rate": "network.{VnicName}.bytes.outgoing"
-    "network.incoming.packets.rate": "network.{VnicName}.packets.incoming"
-    "network.outgoing.packets.rate": "network.{VnicName}.packets.outgoing"
+    "network.incoming.bytes": "network.{VnicName}.bytes.incoming"
+    "network.outgoing.bytes": "network.{VnicName}.bytes.outgoing"
+    "network.incoming.packets": "network.{VnicName}.packets.incoming"
+    "network.outgoing.packets": "network.{VnicName}.packets.outgoing"
