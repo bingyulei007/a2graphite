@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/openmetric/a2graphite/ceilometer"
+	"github.com/bingyulei007/a2graphite/ceilometer"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"

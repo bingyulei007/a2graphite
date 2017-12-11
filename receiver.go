@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/openmetric/graphite-client"
+	"github.com/bingyulei007/graphite-client"
 )
 
 // Receiver is interface for all kind of receivers

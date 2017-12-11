@@ -1,7 +1,7 @@
 package stats
 
 import (
-	"github.com/openmetric/graphite-client"
+	"github.com/bingyulei007/graphite-client"
 	"reflect"
 	"sync/atomic"
 	"time"

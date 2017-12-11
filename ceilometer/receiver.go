@@ -6,8 +6,8 @@ package ceilometer
 import (
 	"errors"
 	"github.com/op/go-logging"
-	"github.com/openmetric/a2graphite/stats"
-	"github.com/openmetric/graphite-client"
+	"github.com/bingyulei007/a2graphite/stats"
+	"github.com/bingyulei007/graphite-client"
 	"github.com/ugorji/go/codec"
 	"net"
 	"strings"
