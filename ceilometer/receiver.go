@@ -6,7 +6,7 @@ package ceilometer
 import (
 	"errors"
 	"github.com/op/go-logging"
-	"github.com/bingyulei007/a2graphite/stats"
+	"a2graphite/stats"
 	"github.com/bingyulei007/graphite-client"
 	"github.com/ugorji/go/codec"
 	"net"
@@ -36,8 +36,16 @@ type ceilometerResource struct {
 
 // UnixTimestamp returns the Unix timestamp of the message
 func (r *ceilometerResource) UnixTimestamp() int64 {
-	if t, err := time.Parse("2006-01-02T15:04:05Z", r.Timestamp); err == nil {
+	/*if t, err := time.Parse("2006-01-02T15:04:05Z", r.Timestamp); err == nil {
 		return t.Unix()
+	}*/
+	t, err := time.Parse("2006-01-02T15:04:05Z", r.Timestamp)
+	if err == nil {
+		return t.Unix()
+	} else {
+		if the_time, err := time.Parse("2006-01-02T15:04:05Z", r.Timestamp + "Z"); err == nil {
+			return the_time.Unix()
+		}
 	}
 	return 0
 }

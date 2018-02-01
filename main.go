@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/op/go-logging"
-	"github.com/bingyulei007/a2graphite/ceilometer"
+	"a2graphite/ceilometer"
 	"github.com/bingyulei007/graphite-client"
 	"net/http"
 	_ "net/http/pprof"
